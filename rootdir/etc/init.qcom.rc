@@ -143,6 +143,9 @@ on post-fs-data
     mkdir /data/connectivity 0771 system system
     chown system system /data/connectivity
 
+    mkdir /data/connectivity/nsrm 0771 system system
+    chown system system /data/connectivity/nsrm
+
     # for WIFI TRP/TIS
     chown system root /data/.psm.info
     chmod 0664 /data/.psm.info
@@ -321,6 +324,7 @@ on post-fs-data
     chmod 0644 /efs/redata.bin
     chown radio radio /efs/h2k.dat
     chmod 0644 /efs/h2k.dat
+    chown system system /efs/drm/h2k
 
     # DRK permission
     mkdir /efs/prov 0770 radio system
@@ -983,6 +987,7 @@ on boot
     chown radio system /efs/redata.bin
     chmod 0644 /efs/h2k.dat
     mkdir /data/misc/radio/hatp 0775 radio system
+    chown system system /efs/drm/h2k
 
     # Vibetonz
     chmod 0660 /dev/tspdrv
@@ -1118,10 +1123,7 @@ service rmt_storage /system/bin/rmt_storage
 service qmuxd /system/bin/qmuxd
     class core
     user radio
-    group radio audio bluetooth gps qcom_diag log
-
-service netmgrd /system/bin/netmgrd
-    class main
+    group radio audio bluetooth gps qcom_diag
 
 service wpa_supplicant /system/bin/wpa_supplicant \
     -iwlan0 -Dnl80211 -c/data/misc/wifi/wpa_supplicant.conf \
