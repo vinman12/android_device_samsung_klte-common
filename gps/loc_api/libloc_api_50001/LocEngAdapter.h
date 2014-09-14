@@ -91,12 +91,8 @@ public:
     inline LocInternalAdapter* getInternalAdapter() { return mInternalAdapter; }
     inline UlpProxyBase* getUlpProxy() { return mUlp; }
     inline void* getOwner() { return mOwner; }
-    inline bool hasAgpsExtendedCapabilities() {
-        return mContext->hasAgpsExtendedCapabilities();
-    }
-    inline bool hasCPIExtendedCapabilities() {
-        return mContext->hasCPIExtendedCapabilities();
-    }
+    inline bool hasAgpsExtendedCapabilities() { return mContext->hasAgpsExtendedCapabilities(); }
+    inline bool hasCPIExtendedCapabilities() { return mContext->hasCPIExtendedCapabilities(); }
     inline const MsgTask* getMsgTask() { return mMsgTask; }
 
     inline enum loc_api_adapter_err
