@@ -48,9 +48,6 @@ BOARD_HAVE_BLUETOOTH_BCM := true
 # CMHW
 BOARD_HARDWARE_CLASS += hardware/samsung/cmhw
 
-# External apps on SD
-TARGET_EXTERNAL_APPS = sdcard1
-
 # Lights
 TARGET_PROVIDES_LIBLIGHT := true
 
