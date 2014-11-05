@@ -1050,12 +1050,6 @@ service qcamerasvr /system/bin/mm-qcamera-daemon
     user camera
     group camera system inet input graphics radio sdcard_rw sdcard_r media_rw shell log
 
-service gpsone_daemon /system/bin/gpsone_daemon
-    class late_start
-    user system
-    group gps inet net_raw
-    disabled
-
 service gsiff_daemon /system/bin/gsiff_daemon
     class late_start
     user system
