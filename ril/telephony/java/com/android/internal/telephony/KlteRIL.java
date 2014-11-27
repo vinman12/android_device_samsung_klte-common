@@ -309,7 +309,8 @@ public class KlteRIL extends RIL implements CommandsInterface {
             if (isGSM) {
                 p.readInt();
                 p.readInt();
-                p.readString();
+                p.readInt();
+                p.readInt();
             }
             dc.number = p.readString();
             int np = p.readInt();
