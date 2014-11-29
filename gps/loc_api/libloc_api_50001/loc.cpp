@@ -287,8 +287,8 @@ static int loc_init(GpsCallbacks* callbacks)
 
     retVal = loc_eng_init(loc_afw_data, &clientCallbacks, event, NULL);
     loc_afw_data.adapter->requestUlp(gps_conf.CAPABILITIES);
-    loc_afw_data.adapter->mAgpsEnabled = !loc_afw_data.adapter->hasAgpsExt();
-    loc_afw_data.adapter->mCPIEnabled = !loc_afw_data.adapter->hasCPIExt();
+    loc_afw_data.adapter->mSupportsAgpsRequests = !loc_afw_data.adapter->hasAgpsExtendedCapabilities();
+    loc_afw_data.adapter->mSupportsPositionInjection = !loc_afw_data.adapter->hasCPIExtendedCapabilities();
 
     EXIT_LOG(%d, retVal);
     return retVal;
@@ -472,33 +472,11 @@ SIDE EFFECTS
 ===========================================================================*/
 static int loc_inject_location(double latitude, double longitude, float accuracy)
 {
-    static bool initialized = false;
-    static bool enable_cpi = true;
-    accuracy = 1000;
     ENTRY_LOG();
 
-    if(!initialized)
-    {
-        char value[PROPERTY_VALUE_MAX];
-        memset(value, 0, sizeof(value));
-        (void)property_get("persist.gps.qc_nlp_in_use", value, "0");
-        if(0 == strcmp(value, "1"))
-        {
-            enable_cpi = false;
-            LOC_LOGI("GPS HAL coarse position injection disabled");
-        }
-        else
-        {
-            LOC_LOGI("GPS HAL coarse position injection enabled");
-        }
-        initialized = true;
-    }
-
     int ret_val = 0;
-    if(enable_cpi)
-    {
-      ret_val = loc_eng_inject_location(loc_afw_data, latitude, longitude, accuracy);
-    }
+    ret_val = loc_eng_inject_location(loc_afw_data, latitude, longitude, accuracy);
+
     EXIT_LOG(%d, ret_val);
     return ret_val;
 }
@@ -666,7 +644,7 @@ static int loc_agps_open(const char* apn)
 {
     ENTRY_LOG();
     AGpsType agpsType = AGPS_TYPE_SUPL;
-    ApnIpType bearerType = AGPS_APN_BEARER_IPV4;
+    AGpsBearerType bearerType = AGPS_APN_BEARER_IPV4;
     int ret_val = loc_eng_agps_open(loc_afw_data, agpsType, apn, bearerType);
 
     EXIT_LOG(%d, ret_val);
@@ -811,8 +789,12 @@ SIDE EFFECTS
 static int loc_xtra_inject_data(char* data, int length)
 {
     ENTRY_LOG();
-    int ret_val = loc_eng_xtra_inject_data(loc_afw_data, data, length);
-
+    int ret_val = -1;
+    if( (data != NULL) && ((unsigned int)length <= XTRA_DATA_MAX_SIZE))
+        ret_val = loc_eng_xtra_inject_data(loc_afw_data, data, length);
+    else
+        LOC_LOGE("%s, Could not inject XTRA data. Buffer address: %p, length: %d",
+                 __func__, data, length);
     EXIT_LOG(%d, ret_val);
     return ret_val;
 }
