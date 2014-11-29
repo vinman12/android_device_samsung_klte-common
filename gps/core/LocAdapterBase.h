@@ -37,7 +37,7 @@ namespace loc_core {
 
 class LocAdapterBase {
 protected:
-    const LOC_API_ADAPTER_EVENT_MASK_T mEvtMask;
+    LOC_API_ADAPTER_EVENT_MASK_T mEvtMask;
     ContextBase* mContext;
     LocApiBase* mLocApi;
     const MsgTask* mMsgTask;
@@ -65,10 +65,19 @@ public:
         mMsgTask->sendMsg(msg);
     }
 
+    inline void updateEvtMask(LOC_API_ADAPTER_EVENT_MASK_T event,
+                       loc_registration_mask_status isEnabled)
+    {
+        mEvtMask =
+            isEnabled == LOC_REGISTRATION_MASK_ENABLED ? (mEvtMask|event):(mEvtMask&~event);
+
+        mLocApi->updateEvtMask();
+    }
+
     // This will be overridden by the individual adapters
     // if necessary.
     inline virtual void setUlpProxy(UlpProxyBase* ulp) {}
-    inline virtual void handleEngineUpEvent() {}
+    virtual void handleEngineUpEvent();
     virtual void handleEngineDownEvent();
     inline virtual void setPositionModeInt(LocPosMode& posMode) {}
     virtual void startFixInt() {}
@@ -97,6 +106,7 @@ public:
     virtual bool requestNiNotify(GpsNiNotification &notify,
                                  const void* data);
     inline virtual bool isInSession() { return false; }
+    virtual void shutdown();
     ContextBase* getContext() const { return mContext; }
 };
 
