@@ -1,4 +1,4 @@
-/* Copyright (c) 2011-2013, The Linux Foundation. All rights reserved.
+/* Copyright (c) 2011-2014, The Linux Foundation. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -35,19 +35,23 @@
 
 namespace loc_core {
 
+class LocAdapterProxyBase;
+
 class LocAdapterBase {
 protected:
     LOC_API_ADAPTER_EVENT_MASK_T mEvtMask;
     ContextBase* mContext;
     LocApiBase* mLocApi;
+    LocAdapterProxyBase* mLocAdapterProxyBase;
     const MsgTask* mMsgTask;
 
     inline LocAdapterBase(const MsgTask* msgTask) :
-        mEvtMask(0), mContext(NULL), mLocApi(NULL), mMsgTask(msgTask) {}
+        mEvtMask(0), mContext(NULL), mLocApi(NULL),
+        mLocAdapterProxyBase(NULL), mMsgTask(msgTask) {}
 public:
     inline virtual ~LocAdapterBase() { mLocApi->removeAdapter(this); }
     LocAdapterBase(const LOC_API_ADAPTER_EVENT_MASK_T mask,
-                   ContextBase* context);
+                   ContextBase* context, LocAdapterProxyBase *adapterProxyBase = NULL);
     inline LOC_API_ADAPTER_EVENT_MASK_T
         checkMask(LOC_API_ADAPTER_EVENT_MASK_T mask) const {
         return mEvtMask & mask;
